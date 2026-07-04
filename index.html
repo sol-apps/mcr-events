@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MCR Events</title>
+  <meta name="description" content="Every gig, club night and event in Manchester — one feed">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🐝%3C/text%3E%3C/svg%3E">
+  <style>
+    :root{ --bg:#FFB84D; --ink:#2b2b29; --muted:#74726a; --panel:#fffaf0; --line:#2b2b29; --accent:#D56062; }
+    [data-theme="dark"]{ --bg:#3f403e; --ink:#FFB84D; --muted:#b9b08f; --panel:#4b4c49; --line:#1b1b1a; --accent:#ff9aa0; }
+    *{ margin:0; box-sizing:border-box; }
+    body{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
+      font-family:"Orbitron",sans-serif; color:var(--ink); background:var(--bg); padding:24px; text-align:center;
+      transition:background-color .25s, color .25s; }
+    .toggle{ position:fixed; top:14px; right:14px; font-family:"Press Start 2P",monospace; font-size:9px;
+      padding:9px 11px; border:3px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink);
+      cursor:pointer; box-shadow:3px 3px 0 var(--line); }
+    .toggle:active{ transform:translate(2px,2px); box-shadow:none; }
+    .emoji{ font-size:clamp(3.5rem,16vw,6rem); filter:drop-shadow(3px 4px 0 rgba(0,0,0,.18)); }
+    h1{ font-family:"Press Start 2P",monospace; font-size:clamp(1rem,5vw,2rem); line-height:1.5; margin:18px 0 10px;
+      text-shadow:3px 3px 0 var(--line); }
+    p.desc{ max-width:46ch; font-weight:500; color:var(--muted); line-height:1.6; }
+    .badge{ margin-top:26px; font-family:"Press Start 2P",monospace; font-size:9px; color:var(--accent);
+      border:3px solid var(--line); border-radius:6px; padding:12px 16px; background:var(--panel);
+      box-shadow:4px 4px 0 var(--line); }
+    a.home{ margin-top:22px; font-weight:700; color:var(--accent); text-decoration:none; letter-spacing:.1em; }
+    a.home:hover{ text-decoration:underline; }
+  </style>
+  <script src="https://unpkg.com/pocketbase@0.27.0/dist/pocketbase.umd.js"></script>
+  <script src="pb-auth.js"></script>
+</head>
+<body>
+  <button class="toggle" id="t" type="button">DARK</button>
+  <div class="emoji">🐝</div>
+  <h1>MCR Events</h1>
+  <p class="desc">Every gig, club night and event in Manchester — one feed</p>
+  <div class="badge">&#9656; LIVE AT mcr-events.solhann.net &mdash; START BUILDING</div>
+  <a class="home" href="https://create.solhann.net">&larr; back to the gallery</a>
+  <script>
+    const r=document.documentElement,b=document.getElementById('t');
+    const set=t=>{r.setAttribute('data-theme',t);b.textContent=t==='dark'?'LIGHT':'DARK';localStorage.setItem('solhann_theme',t)};
+    set(localStorage.getItem('solhann_theme')||'light');
+    b.onclick=()=>set(r.getAttribute('data-theme')==='dark'?'light':'dark');
+  </script>
+</body>
+</html>
