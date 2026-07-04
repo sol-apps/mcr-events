@@ -1,25 +1,25 @@
 // main.pb.js — PocketBase JS hooks for mcr-events. THIS FILE RUNS ON THE SERVER.
 //
-// Delivery: push to main → CI rsyncs pb_hooks/ to the instance's hooks dir
-// (write-only jail, separate from the site deploy); PocketBase reloads on
-// change. Deleting a file here deletes it on prod. pb_hooks/ is never
-// published on the public site.
+// Delivery: push to main → CI rsyncs pb_hooks/ to the instance's hooks dir;
+// PocketBase hot-reloads. Runs on the embedded Goja VM (no npm/Node).
 //
-// Runtime: PocketBase's embedded Goja VM — NO npm, NO Node APIs. You get
-// PocketBase's helpers only: $app, $http.send(...), $os.getenv(...),
-// $filesystem, cronAdd, routerAdd, onRecordCreate, ...
-// Docs: https://pocketbase.io/docs/js-overview/
-//
-// Runtime secrets are set from the dev box (never committed here):
-//   pb-secret set mcr-events.MY_KEY        # store value (prompted on stdin)
-//   pb-provision mcr-events --push-env     # apply to the live instance
-// then read them below with $os.getenv("MY_KEY").
+// Runtime secrets (set from dev, never committed):
+//   pb-secret set mcr-events.SKIDDLE_KEY    # enables the Skiddle source
+//   pb-secret set mcr-events.INGEST_TOKEN   # guards the manual trigger below
+//   pb-provision mcr-events --push-env
 
-// Example: a daily cron writing a record — uncomment (and create the
-// collection first via pb-schema) to try it.
-// cronAdd("daily-example", "0 6 * * *", () => {
-//   const collection = $app.findCollectionByNameOrId("items");
-//   const record = new Record(collection);
-//   record.set("note", "hello from a server-side cron");
-//   $app.save(record);
-// });
+// Daily scrape of all sources at 05:23 UTC (quiet hour for RA/Skiddle).
+cronAdd("ingest", "23 5 * * *", () => {
+  require(`${__hooks}/ingest.js`).run();
+});
+
+// Manual trigger for testing/backfill:
+//   curl -X POST -H "X-Ingest-Token: $TOKEN" https://mcr-events.solhann.net/ingest-now
+routerAdd("POST", "/ingest-now", (e) => {
+  const want = $os.getenv("INGEST_TOKEN");
+  const got = e.request.header.get("X-Ingest-Token");
+  if (!want || got !== want) {
+    return e.json(403, { error: "forbidden" });
+  }
+  return e.json(200, require(`${__hooks}/ingest.js`).run());
+});

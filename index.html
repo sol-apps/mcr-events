@@ -13,38 +13,248 @@
     :root{ --bg:#FFB84D; --ink:#2b2b29; --muted:#74726a; --panel:#fffaf0; --line:#2b2b29; --accent:#D56062; }
     [data-theme="dark"]{ --bg:#3f403e; --ink:#FFB84D; --muted:#b9b08f; --panel:#4b4c49; --line:#1b1b1a; --accent:#ff9aa0; }
     *{ margin:0; box-sizing:border-box; }
-    body{ min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;
-      font-family:"Orbitron",sans-serif; color:var(--ink); background:var(--bg); padding:24px; text-align:center;
-      transition:background-color .25s, color .25s; }
-    .toggle{ position:fixed; top:14px; right:14px; font-family:"Press Start 2P",monospace; font-size:9px;
-      padding:9px 11px; border:3px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink);
-      cursor:pointer; box-shadow:3px 3px 0 var(--line); }
+    body{ min-height:100vh; font-family:"Orbitron",sans-serif; color:var(--ink); background:var(--bg);
+      padding:18px 14px 60px; transition:background-color .25s, color .25s; }
+    .wrap{ max-width:760px; margin:0 auto; }
+    header{ display:flex; align-items:center; gap:14px; margin:6px 0 16px; }
+    .emoji{ font-size:2.6rem; filter:drop-shadow(2px 3px 0 rgba(0,0,0,.18)); }
+    h1{ font-family:"Press Start 2P",monospace; font-size:clamp(.85rem,4vw,1.3rem); line-height:1.4;
+      text-shadow:2px 2px 0 var(--line); }
+    .sub{ font-size:.72rem; font-weight:500; color:var(--muted); margin-top:4px; }
+    .toggle{ margin-left:auto; font-family:"Press Start 2P",monospace; font-size:9px; padding:9px 11px;
+      border:3px solid var(--line); border-radius:6px; background:var(--panel); color:var(--ink);
+      cursor:pointer; box-shadow:3px 3px 0 var(--line); flex-shrink:0; }
     .toggle:active{ transform:translate(2px,2px); box-shadow:none; }
-    .emoji{ font-size:clamp(3.5rem,16vw,6rem); filter:drop-shadow(3px 4px 0 rgba(0,0,0,.18)); }
-    h1{ font-family:"Press Start 2P",monospace; font-size:clamp(1rem,5vw,2rem); line-height:1.5; margin:18px 0 10px;
-      text-shadow:3px 3px 0 var(--line); }
-    p.desc{ max-width:46ch; font-weight:500; color:var(--muted); line-height:1.6; }
-    .badge{ margin-top:26px; font-family:"Press Start 2P",monospace; font-size:9px; color:var(--accent);
-      border:3px solid var(--line); border-radius:6px; padding:12px 16px; background:var(--panel);
-      box-shadow:4px 4px 0 var(--line); }
-    a.home{ margin-top:22px; font-weight:700; color:var(--accent); text-decoration:none; letter-spacing:.1em; }
-    a.home:hover{ text-decoration:underline; }
+
+    .controls{ display:flex; flex-direction:column; gap:10px; margin-bottom:18px; }
+    input.search{ width:100%; padding:11px 14px; font-family:"Orbitron",sans-serif; font-weight:600; font-size:.9rem;
+      color:var(--ink); background:var(--panel); border:3px solid var(--line); border-radius:6px;
+      box-shadow:3px 3px 0 var(--line); outline:none; }
+    input.search::placeholder{ color:var(--muted); }
+    .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+    .chip{ font-family:"Press Start 2P",monospace; font-size:8px; padding:8px 10px; border:3px solid var(--line);
+      border-radius:6px; background:var(--panel); color:var(--ink); cursor:pointer; box-shadow:2px 2px 0 var(--line); }
+    .chip.on{ background:var(--accent); color:#fffaf0; }
+    .chip:active{ transform:translate(2px,2px); box-shadow:none; }
+
+    .rail-title, .day{ font-family:"Press Start 2P",monospace; font-size:10px; margin:22px 0 10px;
+      color:var(--ink); text-shadow:1px 1px 0 rgba(0,0,0,.15); }
+    .rail{ display:flex; gap:12px; overflow-x:auto; padding:4px 2px 12px; scrollbar-width:thin; }
+    .pick{ min-width:210px; max-width:210px; border:3px solid var(--line); border-radius:8px; background:var(--panel);
+      box-shadow:4px 4px 0 var(--line); overflow:hidden; text-decoration:none; color:var(--ink); flex-shrink:0; }
+    .pick img{ width:100%; height:110px; object-fit:cover; display:block; border-bottom:3px solid var(--line); }
+    .pick .pbody{ padding:10px; }
+    .pick .ptitle{ font-weight:700; font-size:.78rem; line-height:1.35; display:-webkit-box;
+      -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .pick .pmeta{ font-size:.66rem; color:var(--muted); margin-top:6px; font-weight:600; }
+
+    .card{ display:flex; gap:12px; align-items:flex-start; border:3px solid var(--line); border-radius:8px;
+      background:var(--panel); box-shadow:4px 4px 0 var(--line); padding:12px; margin-bottom:12px; }
+    .thumb{ width:64px; height:64px; object-fit:cover; border:2px solid var(--line); border-radius:6px; flex-shrink:0; }
+    .thumb.ph{ display:flex; align-items:center; justify-content:center; font-size:1.6rem; background:var(--bg); }
+    .info{ min-width:0; flex:1; }
+    .time{ font-family:"Press Start 2P",monospace; font-size:8px; color:var(--accent); }
+    .etitle{ font-weight:700; font-size:.95rem; line-height:1.35; margin:4px 0 2px; overflow-wrap:anywhere; }
+    .etitle a{ color:var(--ink); text-decoration:none; }
+    .etitle a:hover{ text-decoration:underline; }
+    .venue{ font-size:.78rem; font-weight:600; }
+    .lineup{ font-size:.72rem; color:var(--muted); line-height:1.5; margin-top:2px; display:-webkit-box;
+      -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
+    .tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:8px; align-items:center; }
+    .tag{ font-family:"Press Start 2P",monospace; font-size:7px; padding:4px 6px; border:2px solid var(--line);
+      border-radius:4px; background:var(--bg); color:var(--ink); text-decoration:none; }
+    .tag.src{ background:var(--panel); color:var(--accent); }
+    .tag.picktag{ background:var(--accent); color:#fffaf0; }
+    .star{ font-size:1.25rem; background:none; border:none; cursor:pointer; padding:2px 4px; flex-shrink:0;
+      filter:grayscale(1) opacity(.45); }
+    .star.on{ filter:none; }
+    .state{ font-family:"Press Start 2P",monospace; font-size:10px; text-align:center; padding:40px 10px;
+      line-height:2; color:var(--muted); }
+    footer{ margin-top:40px; font-size:.68rem; color:var(--muted); font-weight:500; text-align:center; line-height:1.8; }
+    footer a{ color:var(--accent); }
   </style>
   <script src="https://unpkg.com/pocketbase@0.27.0/dist/pocketbase.umd.js"></script>
   <script src="pb-auth.js"></script>
 </head>
 <body>
-  <button class="toggle" id="t" type="button">DARK</button>
-  <div class="emoji">🐝</div>
-  <h1>MCR Events</h1>
-  <p class="desc">Every gig, club night and event in Manchester — one feed</p>
-  <div class="badge">&#9656; LIVE AT mcr-events.solhann.net &mdash; START BUILDING</div>
-  <a class="home" href="https://create.solhann.net">&larr; back to the gallery</a>
+  <div class="wrap">
+    <header>
+      <div class="emoji">🐝</div>
+      <div>
+        <h1>MCR EVENTS</h1>
+        <div class="sub">every gig, club night &amp; event in Manchester — one feed</div>
+      </div>
+      <button class="toggle" id="t" type="button">DARK</button>
+    </header>
+
+    <div class="controls">
+      <input class="search" id="q" type="search" placeholder="search artists, venues, nights…">
+      <div class="chips" id="cats"></div>
+      <div class="chips" id="dates"></div>
+    </div>
+
+    <div id="picks"></div>
+    <div id="feed"><div class="state">LOADING…</div></div>
+
+    <footer>
+      updated nightly from <a href="https://ra.co/events/uk/manchester" rel="noopener">Resident Advisor</a>
+      and <a href="https://www.skiddle.com" rel="noopener">Skiddle</a> · ⭐ saves live in your browser<br>
+      <a href="https://create.solhann.net">&larr; back to the gallery</a>
+    </footer>
+  </div>
+
   <script>
     const r=document.documentElement,b=document.getElementById('t');
-    const set=t=>{r.setAttribute('data-theme',t);b.textContent=t==='dark'?'LIGHT':'DARK';localStorage.setItem('solhann_theme',t)};
-    set(localStorage.getItem('solhann_theme')||'light');
-    b.onclick=()=>set(r.getAttribute('data-theme')==='dark'?'light':'dark');
+    const setTheme=t=>{r.setAttribute('data-theme',t);b.textContent=t==='dark'?'LIGHT':'DARK';localStorage.setItem('solhann_theme',t)};
+    setTheme(localStorage.getItem('solhann_theme')||'light');
+    b.onclick=()=>setTheme(r.getAttribute('data-theme')==='dark'?'light':'dark');
+  </script>
+  <script>
+  (async () => {
+    const CATS = ['all','clubs','gigs','comedy','theatre','arts','festivals','other','saved'];
+    const DATES = [['all','ALL DATES'],['tonight','TONIGHT'],['tomorrow','TOMORROW'],['weekend','WEEKEND']];
+    const feedEl = document.getElementById('feed');
+    const picksEl = document.getElementById('picks');
+    const state = { cat:'all', date:'all', q:'' };
+    const saved = new Set(JSON.parse(localStorage.getItem('mcr_saved')||'[]'));
+    let events = [];
+
+    // starts_at holds Manchester wall-clock time flagged as UTC, so all
+    // formatting/grouping below uses UTC getters — no timezone conversion.
+    const dayKey = d => d.toISOString().slice(0,10);
+    const fmtTime = d => String(d.getUTCHours()).padStart(2,'0')+':'+String(d.getUTCMinutes()).padStart(2,'0');
+    const DAYS=['SUN','MON','TUE','WED','THU','FRI','SAT'], MONTHS=['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+    const fmtDay = d => DAYS[d.getUTCDay()]+' '+d.getUTCDate()+' '+MONTHS[d.getUTCMonth()];
+    // "today" in Manchester wall time, approximated by the browser's local day
+    const now = new Date();
+    const todayKey = dayKey(new Date(Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())));
+    const offsetKey = days => { const d=new Date(todayKey+'T00:00:00Z'); d.setUTCDate(d.getUTCDate()+days); return dayKey(d); };
+
+    const esc = s => String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    const key = e => e.source+':'+e.source_id;
+
+    function tokens(t){ return String(t).toLowerCase().replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>3); }
+
+    // Cross-source dedup: same day+venue and any meaningful shared title token
+    // → one card (RA record wins; the duplicate's link is kept as extra badge).
+    function dedupe(list){
+      const byKey = {};
+      for (const e of list) (byKey[e.dedup_key] ??= []).push(e);
+      const out = [];
+      for (const group of Object.values(byKey)) {
+        group.sort((a,b)=> a.source==='ra' ? -1 : b.source==='ra' ? 1 : 0);
+        const kept = [];
+        for (const e of group) {
+          const dup = kept.find(k => k.source!==e.source && tokens(k.title).some(w=>tokens(e.title).includes(w)));
+          if (dup) { (dup.also ??= []).push(e); dup.is_pick = dup.is_pick || e.is_pick; }
+          else kept.push(e);
+        }
+        out.push(...kept);
+      }
+      return out.sort((a,b)=> a.starts_at < b.starts_at ? -1 : 1);
+    }
+
+    function matches(e){
+      if (state.cat==='saved') { if(!saved.has(key(e))) return false; }
+      else if (state.cat!=='all' && e.category!==state.cat) return false;
+      const dk = e.starts_at.slice(0,10);
+      if (state.date==='tonight' && dk!==todayKey) return false;
+      if (state.date==='tomorrow' && dk!==offsetKey(1)) return false;
+      if (state.date==='weekend') {
+        const dow=(new Date(e.starts_at.replace(' ','T'))).getUTCDay();
+        const within7=[0,1,2,3,4,5,6].map(offsetKey).includes(dk);
+        if (!within7 || (dow!==5&&dow!==6&&dow!==0)) return false;
+      }
+      if (state.q) {
+        const hay=(e.title+' '+e.venue+' '+(e.artists||[]).join(' ')).toLowerCase();
+        if (!hay.includes(state.q)) return false;
+      }
+      return true;
+    }
+
+    function srcTag(e){ return `<a class="tag src" href="${esc(e.url)}" target="_blank" rel="noopener">${e.source==='ra'?'RA ↗':'SKIDDLE ↗'}</a>`; }
+
+    function card(e){
+      const d = new Date(e.starts_at.replace(' ','T'));
+      const img = e.image ? `<img class="thumb" src="${esc(e.image)}" alt="" loading="lazy">` : `<div class="thumb ph">🐝</div>`;
+      const artists = (e.artists||[]).join(' · ');
+      return `<div class="card">
+        ${img}
+        <div class="info">
+          <span class="time">${fmtTime(d)}</span>
+          <div class="etitle"><a href="${esc(e.url)}" target="_blank" rel="noopener">${esc(e.title)}</a></div>
+          <div class="venue">${esc(e.venue)}</div>
+          ${artists?`<div class="lineup">${esc(artists)}</div>`:''}
+          <div class="tags">
+            ${e.is_pick?'<span class="tag picktag">⭐ PICK</span>':''}
+            <span class="tag">${esc((e.category||'other').toUpperCase())}</span>
+            ${srcTag(e)}${(e.also||[]).map(srcTag).join('')}
+            ${e.attending?`<span class="tag">${e.attending} GOING</span>`:''}
+          </div>
+        </div>
+        <button class="star ${saved.has(key(e))?'on':''}" data-k="${esc(key(e))}" title="save">⭐</button>
+      </div>`;
+    }
+
+    function render(){
+      const vis = events.filter(matches);
+      const picks = vis.filter(e=>e.is_pick && state.cat!=='saved').slice(0,12);
+      picksEl.innerHTML = picks.length ? `<div class="rail-title">⭐ PICKS</div><div class="rail">`+
+        picks.map(e=>{const d=new Date(e.starts_at.replace(' ','T'));return `<a class="pick" href="${esc(e.url)}" target="_blank" rel="noopener">
+          ${e.image?`<img src="${esc(e.image)}" alt="" loading="lazy">`:''}
+          <div class="pbody"><div class="ptitle">${esc(e.title)}</div>
+          <div class="pmeta">${fmtDay(d)} · ${esc(e.venue)}</div></div></a>`;}).join('')+`</div>` : '';
+
+      if (!vis.length) { feedEl.innerHTML = `<div class="state">${state.cat==='saved'?'NO SAVED EVENTS YET — HIT ⭐':'NOTHING FOUND'}</div>`; return; }
+      let html='', lastDay='';
+      for (const e of vis) {
+        const dk = e.starts_at.slice(0,10);
+        if (dk!==lastDay) {
+          const d=new Date(dk+'T00:00:00Z');
+          const label = dk===todayKey?'TONIGHT — '+fmtDay(d) : dk===offsetKey(1)?'TOMORROW — '+fmtDay(d) : fmtDay(d);
+          html+=`<div class="day">${label}</div>`; lastDay=dk;
+        }
+        html+=card(e);
+      }
+      feedEl.innerHTML = html;
+    }
+
+    function chipRow(el, items, get, set){
+      el.innerHTML = items.map(([v,l])=>`<button class="chip ${get()===v?'on':''}" data-v="${v}">${l}</button>`).join('');
+      el.onclick = ev => { const c=ev.target.closest('.chip'); if(!c) return; set(c.dataset.v); renderChips(); render(); };
+    }
+    function renderChips(){
+      const have = new Set(events.map(e=>e.category));
+      const cats = CATS.filter(c=>c==='all'||c==='saved'||have.has(c)).map(c=>[c, c==='saved'?'⭐ SAVED':c.toUpperCase()]);
+      chipRow(document.getElementById('cats'), cats, ()=>state.cat, v=>state.cat=v);
+      chipRow(document.getElementById('dates'), DATES, ()=>state.date, v=>state.date=v);
+    }
+
+    document.getElementById('q').addEventListener('input', ev=>{ state.q=ev.target.value.trim().toLowerCase(); render(); });
+    feedEl.addEventListener('click', ev=>{
+      const s=ev.target.closest('.star'); if(!s) return;
+      const k=s.dataset.k;
+      saved.has(k)?saved.delete(k):saved.add(k);
+      localStorage.setItem('mcr_saved', JSON.stringify([...saved]));
+      s.classList.toggle('on');
+      if (state.cat==='saved') render();
+    });
+
+    try {
+      const pb = PBAuth.getClient();
+      const rows = await pb.collection('events').getFullList({
+        filter: `starts_at >= "${todayKey} 00:00:00"`,
+        sort: 'starts_at',
+        batch: 500,
+      });
+      events = dedupe(rows);
+      renderChips();
+      render();
+    } catch (err) {
+      feedEl.innerHTML = `<div class="state">FEED UNAVAILABLE — TRY AGAIN LATER</div>`;
+      console.error(err);
+    }
+  })();
   </script>
 </body>
 </html>
